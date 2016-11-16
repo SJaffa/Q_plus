@@ -5,7 +5,7 @@ Created on Tue Jun 21 15:40:17 2016
 @author: c0906755
 """
 import numpy as np
-import cubefuncs as cf
+import qfuncs as cf
 import matplotlib.pyplot as plt
 from scipy.optimize import curve_fit
 import glob as gb

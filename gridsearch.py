@@ -6,7 +6,7 @@ Created on Mon Jun 20 17:46:20 2016
 """
 
 import numpy as np
-import cubefuncs as cf
+import qfuncs as cf
 import matplotlib.pyplot as plt
 
 plt.rcParams.update({'font.size': 14, 'font.family':'serif','text.usetex':True})

@@ -12,7 +12,7 @@ plot cluster
 import numpy as np
 import matplotlib.pyplot as plt
 import glob as gb
-import cubefuncs as cf
+import qfuncs as cf
 plt.rcParams.update({'font.size': 14, 'font.family':'serif','text.usetex':False})
 
 
