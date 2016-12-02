@@ -159,4 +159,4 @@ if plot_std:
 
 #plt.savefig("grid_"+thing+".pdf")
 
-#np.save('pcgrid_corr',grid_info,allow_pickle=True)
+np.save('pcgrid',grid_info,allow_pickle=True)

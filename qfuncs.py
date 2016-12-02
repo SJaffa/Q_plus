@@ -1,12 +1,16 @@
 import numpy as np
 from scipy.sparse.csgraph import minimum_spanning_tree
 import re
-import multiprocessing as mp
-import matplotlib.pyplot as plt
 from scipy.spatial import KDTree
 
 #===========================================================
-
+def get_parameter_space():
+    F = np.array([2.0, 3.0, 4.0, 5.0]) #ax0
+    C = np.array([2.0, 3.0, 22.0]) #ax1
+    G = np.array([3.0, 4.0, 5.0, 6.0, 7.0, 8.0]) #ax2
+    D=np.log2(F)
+    
+    return D,C,G,F
 
 def rotate_view(stars):
     relev=np.random.uniform(-90,90)
@@ -81,7 +85,6 @@ def justMST(x,y,z=[8]):
     
     
 def makeMST(datafile,ucols=[0,1]):
-    #d,c,g,r=getname(datafile)
     d,c,g,r=0,0,0,0
     #read in data
     with open(datafile, 'r') as infile:
@@ -112,25 +115,6 @@ def makeMST(datafile,ucols=[0,1]):
     reslist.append(reslist[7]/reslist[8]) #Q parameter
     return reslist,x,y
 
-def mst(d, c, g):
-    fname = "PStars/D%3.2fC%3.2fG%3.2f.starnames"%(d, c, g)
-    outlist = []
-    pool = mp.Pool()
-    namefile = open(fname, "r")
-    names = namefile.read().split()
-    namefile.close()
-    for datafile in names:
-        #outlist.append(makeMST(datafile))
-        outlist.append(pool.apply_async( makeMST, args=(datafile, )))
-    pool.close()
-    pool.join()
-    outlist = [output.get() for output in outlist]
-    outfile = "PStars/D%3.2fC%3.2fG%3.2f.res"%(d, c, g)
-    with open(outfile, 'a') as fileout:
-        for i in outlist:
-            writelist(fileout, i) 
-    return outfile
-
 def n_stars(d, c, g):
     #d = np.log2(dp)
     #c = 2.+(1./cp)
@@ -140,22 +124,6 @@ def n_stars(d, c, g):
         return n0*(g+1.)
     else:   
         return n0*(pow(alpha, (g+1.))-1.)/(alpha-1.)
-
-    
-def getname(fname):
-    #Find parameters in filename
-    p=re.compile('\D+')
-    parts=p.split(fname)
-    #print fname
-    d=float(parts[1])+(float(parts[2])*10**-(len(parts[2])))
-    c=int(parts[3])#+(float(parts[4])*10**-(len(parts[4])))
-    g=int(parts[4])#+(float(parts[6])*10**-(len(parts[6])))
-    #print len(parts)
-    if len(parts)>8:
-        r=int(parts[7])
-    else:
-        r=9999
-    return d,c,g,r
 
 def normgaus(val, mu, sig):
     #find prob of val being drawn from gaussian mu, sig
@@ -263,30 +231,11 @@ def select_data(full,d=99,c=99,g=99,dstring='D',cstring='C',gstring='G',sep=0.1)
         full=full[(abs(full[gstring]-g)<sep)]
     return full
     
-
-
-def mean_adjust_data(save_array=False):   
-    alldata=read_all_data()
-    
-    data=alldata[alldata['flag']=='True']
-    names=data.dtype.names
-    
-    numnames=list(names[4:-1])
-    nums=data[numnames]
-    numarray=nums.view('f4').reshape(nums.shape + (-1,))
-    
-    tmp=np.load('fullmeans.npz')
-    means=tmp['means']
-    stds=tmp['stds']
-    meaned=np.zeros_like(data)
-    
-    for i in range(len(means[0])):
-        meaned[numnames[i]]=(numarray[:,i]-means[0][i])/stds[0][i]
-
-    xmeaned=meaned[list(names[4:-1])]
-    if save_array:
-        np.save('full_adjusted',xmeaned)
-    return xmeaned
+def struct_to_array(struct):
+    tmp=[]
+    [ tmp.append(struct[col]) for col in struct.dtype.names]
+    arr=np.array(tmp,dtype=float)
+    return arr
     
 def transform_to_pc(tdata,method='cov'):
                      

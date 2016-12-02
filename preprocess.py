@@ -39,36 +39,6 @@ for i in range(len(cols)):
 
 skip=int(raw_input("Header rows to skip:"))
 """
-"""
-fname="./Data/Lupus3_pc.txt"
-has_bins=True
-cols=[0,1]
-skip=0
-"""
-
-#fname="../Collaborations/160816_Koepferl/SMA_ALMA/set4.txt"
-#has_bins=True
-#bin_scale=0.03
-#cols=[0,1]
-#skip=0
-
-"""fname="../Collaborations/160816_Koepferl/SMA_ALMA/Extra/hyp_181_sinks.txt"
-has_bins=True
-bin_scale=0.03
-cols=[0,1]
-skip=0"""
-
-"""fname="./Data/HiGAL/all_tiles_xyz_pc.txt"
-has_bins=True
-bin_scale=0.03
-cols=[0,1,2]fname="./Data/HiGAL/all_tiles_xyz_pc.txt"
-has_bins=True
-bin_scale=0.03
-cols=[0,1,2]
-skip=0
-dims=3
-skip=0
-dims=3"""
 
 #fname="./Data/HiGAL/all_tiles_xyz_pc.txt"
 has_bins=True

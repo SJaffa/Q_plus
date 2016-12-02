@@ -1,4 +1,11 @@
+.gitignore
+
 # Recently changed files #
 ##########################
 
 *~
+
+# Python module files #
+#######################
+
+*.pyc
