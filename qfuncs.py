@@ -276,15 +276,15 @@ def find_binaries(x,y,z=[],v=0.03):
         data=np.vstack((x,y)).T
     else:
         data=np.vstack((x,y,z)).T
-        #print data.T
-        KDT=KDTree(data)
-        #print "Tree made"
-        binaries=list(KDT.query_pairs(v))
-        #print binaries
-        try:
-            return binaries#[0]
-        except IndexError:
-            return []
+    #print data.T
+    KDT=KDTree(data)
+    #print "Tree made"
+    binaries=list(KDT.query_pairs(v))
+    #print binaries
+    try:
+        return binaries#[0]
+    except IndexError:
+        return []
 
 def remove_binaries(x,y,z=[],scale=0.03,expected=0):
     if len(z)<1: #2D

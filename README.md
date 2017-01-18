@@ -5,9 +5,15 @@ Q+: an algorithm for statistically quantifying sub-structure in star clusters
 x,y: two-dimensional position of stars in parsecs
 
 # OUTPUTS
-[d,l,c]: estimated fractal dimension, number of levels, density scaling exponent
-[d_err,l_err,c_err]: errors on  estimated fractal dimension, number of levels, density scaling exponent
+[D,L,C]: estimated fractal dimension, number of levels, density scaling exponent
+[D_err,L_err,C_err]: errors on  estimated fractal dimension, number of levels, density scaling exponent
 
 # DOCUMENTATION
-See paper for a ful explanation of the algorithm.
+This algorithm:
+	-builds the complete graph and minimum spanning tree of the points,
+	-derives various statistics of structure from these,
+	-compares these statistics to a set with known structure, and
+	-estimates the most likely structure parameters and their error.
+See paper for a full explanation of the algorithm.
+
 

@@ -149,9 +149,11 @@ ax2.set_xlabel("PC 1")
 ax2.set_ylabel("PC 2")
 
 
-im1=ax2.imshow(means.T,aspect='auto',interpolation='none',origin='lower',extent=(min1,max1,min2,max2),vmin=0)#,vmax=meanmax)
+im1=ax2.imshow(means.T,aspect='auto',interpolation='none',
+               origin='lower',extent=(min1,max1,min2,max2),vmin=0)#,vmax=meanmax)
 if plot_std:
-    im2=ax3.imshow(stds.T,aspect='auto',interpolation='none',origin='lower',extent=(min1,max1,min2,max2),vmin=0)#
+    im2=ax3.imshow(stds.T,aspect='auto',interpolation='none',
+                   origin='lower',extent=(min1,max1,min2,max2),vmin=0)#
 
 fig.colorbar(im1,ax=ax2,pad=0)
 if plot_std:
@@ -159,4 +161,4 @@ if plot_std:
 
 #plt.savefig("grid_"+thing+".pdf")
 
-np.save('pcgrid',grid_info,allow_pickle=True)
+#np.save('pcgrid',grid_info,allow_pickle=True)

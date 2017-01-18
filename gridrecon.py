@@ -126,6 +126,7 @@ llist=[]
 #           "./Data/Scott/ST2.0_nobins.txt",]
 
 #testfiles=gb.glob('./Data/Koepferl/Nobins/Qsim*_nobins.txt')
+testfiles=gb.glob('/home/sjaffa/Dropbox/PhDwork/160101DCGstars/Data/Frac_clouds/D232C22G6R0_points.txt')
 
 """testfiles=['../161007CloudsToPoints/Experimenting/D158C22G6R10_npix_30_std_10_100.dat', 
 '../161007CloudsToPoints/Experimenting/D158C22G6R10_npix_30_std_10_500.dat',
@@ -141,12 +142,12 @@ llist=[]
 '../161007CloudsToPoints/Experimenting/D158C22G6R10_npix_30_std_5_4000.dat', 
 '../161007CloudsToPoints/Experimenting/D158C22G6R10_npix_30_std_5_6000.dat', ]"""
 
-testfiles=['../161007CloudsToPoints/Experimenting/D158C22G6R10_npix_20_std_5_100.dat', 
-'../161007CloudsToPoints/Experimenting/D158C22G6R10_npix_20_std_5_500.dat',
-'../161007CloudsToPoints/Experimenting/D158C22G6R10_npix_20_std_5_1000.dat', 
-'../161007CloudsToPoints/Experimenting/D158C22G6R10_npix_20_std_5_2000.dat', 
-'../161007CloudsToPoints/Experimenting/D158C22G6R10_npix_20_std_5_4000.dat', 
-'../161007CloudsToPoints/Experimenting/D158C22G6R10_npix_20_std_5_6000.dat', ]
+#testfiles=['../161007CloudsToPoints/Experimenting/D158C22G6R10_npix_20_std_5_100.dat', 
+#'../161007CloudsToPoints/Experimenting/D158C22G6R10_npix_20_std_5_500.dat',
+#'../161007CloudsToPoints/Experimenting/D158C22G6R10_npix_20_std_5_1000.dat', 
+#'../161007CloudsToPoints/Experimenting/D158C22G6R10_npix_20_std_5_2000.dat', 
+#'../161007CloudsToPoints/Experimenting/D158C22G6R10_npix_20_std_5_4000.dat', 
+#'../161007CloudsToPoints/Experimenting/D158C22G6R10_npix_20_std_5_6000.dat', ]
 
 #testfiles=["../Collaborations/160816_Koepferl/SMA_ALMA/set1_nobins.txt",
 #           "../Collaborations/160816_Koepferl/SMA_ALMA/set2_nobins.txt",
@@ -194,7 +195,7 @@ for datafile in testfiles:
             A_measure=res[6]
             l1,=ax2.plot(pcs[0,0],pcs[1,0],'*',markersize=20,label=datafile)#,mfc=datafile[1])
             
-            grid_info=np.load('pcgrid.npy')
+            #grid_info=np.load('pcgrid.npy')
             
             llist.append(l1)
             
