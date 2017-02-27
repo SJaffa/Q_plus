@@ -1,0 +1,14 @@
+PStars/D2.00C1.00G4.00.stat
+#Fractal Dimension	2.000000	0.000000
+#Density Scaling Exponent	1.000000	0.000000
+#Maximum Generation	4.000000	0.000000
+#Random seed	49.500000	28.866070
+#Log10(N_stars)	2.824094	0.033446
+#r measure	579.172397	313.174273
+#A measure	0.287426	0.008618
+#Normalised mean edge length of MST	0.530765	0.037321
+#Normalised correlation length	0.707772	0.069272
+#Mean of MST edges	0.040057	0.002270
+#Standard deviation of MST edges	0.024902	0.001698
+#Mean of all edges	0.775761	0.051192
+#Standard deviation of all edges	0.389808	0.022599

@@ -4,6 +4,22 @@ import re
 from scipy.spatial import KDTree
 
 #===========================================================
+def pooledmeanvar(x,y):
+    '''calculates mean and variance of hte combination of two data sets, x and y'''
+    xmean = x[0]
+    xvar  = x[1]
+    ymean = y[0]
+    yvar  = y[1]
+    xn    = x[2] #number of points
+    yn    = y[2]
+    
+    xyn    = xn + yn
+    xymean = (xn * xmean + yn * ymean) / xyn
+    xyvar  = np.sqrt(((xn * xvar**2 + yn * yvar**2)/xyn) + ((xn * yn)/(xyn**2))*((xmean - ymean)**2))
+    
+    return xymean, xyvar, xyn
+
+
 def get_parameter_space():
     F = np.array([2.0, 3.0, 4.0, 5.0]) #ax0
     C = np.array([2.0, 3.0, 22.0]) #ax1

@@ -10,8 +10,9 @@ import matplotlib.pyplot as plt
 from scipy.optimize import curve_fit
 import glob as gb
 import sys
+#import annotateplot as ap
 
-plt.rcParams.update({'font.size': 14, 'font.family':'serif','text.usetex':True})
+plt.rcParams.update({'font.size': 10, 'font.family':'serif','text.usetex':False})
 
     
 def find_square(grid,p1,p2):
@@ -89,8 +90,9 @@ def find_c(testD,testG,A_val):
         m=arr[i,1]
         s=arr[i,2]
         ps.append(cf.normgaus(A_val,m,s))
-    popt,pcov=curve_fit(cf.normgaus,cs,ps/sum(ps),[.3,0.2],bounds=(0,2))
-    return popt
+    expect=sum(np.array(ps)*np.array(cs))/sum(ps)
+    var=sum(np.array(ps)*pow((np.array(cs)-expect),2))/sum(ps)
+    return expect,var
 
 
 D=np.array([ 1.       ,  1.5849625,  2.       ])
@@ -126,7 +128,7 @@ llist=[]
 #           "./Data/Scott/ST2.0_nobins.txt",]
 
 #testfiles=gb.glob('./Data/Koepferl/Nobins/Qsim*_nobins.txt')
-testfiles=gb.glob('/home/sjaffa/Dropbox/PhDwork/160101DCGstars/Data/Frac_clouds/D232C22G6R0_points.txt')
+#testfiles=gb.glob('/home/sjaffa/Dropbox/PhDwork/160101DCGstars/Data/Frac_clouds/D232C22G6R0_points.txt')
 
 """testfiles=['../161007CloudsToPoints/Experimenting/D158C22G6R10_npix_30_std_10_100.dat', 
 '../161007CloudsToPoints/Experimenting/D158C22G6R10_npix_30_std_10_500.dat',
@@ -161,107 +163,119 @@ testfiles=gb.glob('/home/sjaffa/Dropbox/PhDwork/160101DCGstars/Data/Frac_clouds/
 
 #testfiles=gb.glob('../Collaborations/160818_Smilgys/cluster*.dat')
 #testfiles=gb.glob('../Collaborations/160816_Koepferl/Q_analysis/Q*.txt')
+#testfiles=gb.glob('/home/sjaffa/Dropbox/PhDwork/Collaborations/161127_Boily/ForSJ/r15_Ser*_nobins.txt')
 
+#testfiles=gb.glob('/home/sjaffa/Dropbox/PhDwork/170103QplusClouds/HiGal/slice_*n2000.pp')
+
+testfiles=gb.glob('/home/sjaffa/Dropbox/PhDwork/Collaborations/170109_Urquhart/G*')
 
 fout=sys.stdout
 names=[]
 ii=0
 for datafile in testfiles:
-    for ucols in [[0,1]]:#,[0,2],[1,2]]:
-        #fout.write("\n"+datafile+"\n")
-        print "['%s',"%datafile,
-        #print ucols
+    dataname=datafile[60:]
+    ucols=[1,2]
+    #fout.write("\n"+datafile+"\n")
+    print "['%s',"%dataname,
+    #print ucols
+    try:
+        res,x,y=cf.makeMST(datafile,ucols=ucols)
+        if len(x)<10:
+                    print "Only %i stars"%len(x)
+                    continue
+        names.append(datafile[40:-8])
+        data=np.array([(res[4],
+                       res[5], 
+                       res[7], 
+                       res[8], 
+                       res[9], 
+                       res[10])],
+                      dtype=[('logN', '<f4'), 
+                             ('logR', '<f4'), 
+                             ('mbar', '<f4'), 
+                             ('sbar', '<f4'), 
+                             ('muMST', '<f4'), 
+                             ('stdMST', '<f4')])
+
+        Q=data['mbar']/data['sbar']
+        if Q>0.7:
+            print "Q = %3.2f: this cluster may be centrally concentrated"%Q
+            #continue
+                             
+        pcs=cf.transform_to_pc(data)
+        
+        A_measure=res[6]
+        l1,=ax2.plot(pcs[0,0],pcs[1,0],'*',markersize=20,label=dataname)#,mfc=datafile[1])
+        #af = ap.AnnoteFinder([pcs[0,0]],[pcs[1,0]], [dataname], ax=ax2)
+        #fig.canvas.mpl_connect('button_press_event', af)
+        
+        #grid_info=np.load('pcgrid.npy')
+        
+        llist.append(l1)
+        
+        p1=pcs[0,0]
+        p2=pcs[1,0]
+        
         try:
-            res,x,y=cf.makeMST(datafile,ucols=ucols)
-            if len(x)<10:
-                        print "Only %i stars"%len(x)
-                        continue
-            names.append(datafile[40:-8])
-            data=np.array([(res[4],
-                           res[5], 
-                           res[7], 
-                           res[8], 
-                           res[9], 
-                           res[10])],
-                          dtype=[('logN', '<f4'), 
-                                 ('logR', '<f4'), 
-                                 ('mbar', '<f4'), 
-                                 ('sbar', '<f4'), 
-                                 ('muMST', '<f4'), 
-                                 ('stdMST', '<f4')])
-                                 
-            pcs=cf.transform_to_pc(data)
-            
-            A_measure=res[6]
-            l1,=ax2.plot(pcs[0,0],pcs[1,0],'*',markersize=20,label=datafile)#,mfc=datafile[1])
-            
-            #grid_info=np.load('pcgrid.npy')
-            
-            llist.append(l1)
-            
-            p1=pcs[0,0]
-            p2=pcs[1,0]
-            
-            try:
-                thissquare,_=find_square(grid_info,p1,p2)
-            except TypeError:
-                fout.write("Outside parameter space:")
+            thissquare,_=find_square(grid_info,p1,p2)
+        except TypeError:
+            fout.write("Outside parameter space:")
+            fout.write("PC1=%3.2f, PC2=%3.2f\n"%(p1,p2))
+            continue
+        
+        est=grid_info[thissquare]
+
+        if est.N>2: 
+            fout.write(est.printD())
+            fout.write(est.printG())
+            g_found=est.G.mean
+            d_found=est.D.mean
+        else:
+            neighbs,newN=find_neighbs(grid_info,thissquare)
+            if newN==0:
+                fout.write("Outside parameter space (empty super-square):")
                 fout.write("PC1=%3.2f, PC2=%3.2f\n"%(p1,p2))
                 continue
+            #merge D
+            thisN=grid_info[neighbs[0]].N
+            thisDmean=grid_info[neighbs[0]].D.mean
+            thisDvar=grid_info[neighbs[0]].D.std
+            for i in range(1,len(neighbs)):
+                thisstuff=[thisDmean,thisDvar,thisN]
+                newstuff=[grid_info[neighbs[i]].D.mean,
+                          grid_info[neighbs[i]].D.std,
+                          grid_info[neighbs[i]].N]
+                thisDmean,thisDvar,thisN=cf.pooledmeanvar(thisstuff,newstuff)
+            fout.write("[%3.2f,%3.2f],"%(thisDmean,thisDvar))
             
-            est=grid_info[thissquare]
-
-            if est.N>2: 
-                fout.write(est.printD())
-                fout.write(est.printG())
-                g_found=est.G.mean
-                d_found=est.D.mean
-            else:
-                neighbs,newN=find_neighbs(grid_info,thissquare)
-                if newN==0:
-                    fout.write("Outside parameter space (empty super-square):")
-                    fout.write("PC1=%3.2f, PC2=%3.2f\n"%(p1,p2))
-                    continue
-                #merge D
-                thisN=grid_info[neighbs[0]].N
-                thisDmean=grid_info[neighbs[0]].D.mean
-                thisDvar=grid_info[neighbs[0]].D.std
-                for i in range(1,len(neighbs)):
-                    thisstuff=[thisDmean,thisDvar,thisN]
-                    newstuff=[grid_info[neighbs[i]].D.mean,
-                              grid_info[neighbs[i]].D.std,
-                              grid_info[neighbs[i]].N]
-                    thisDmean,thisDvar,thisN=cf.pooledmeanvar(thisstuff,newstuff)
-                fout.write("[%3.2f,%3.2f],"%(thisDmean,thisDvar))
-                
-                #merge G
-                thisN=grid_info[neighbs[0]].N
-                thisGmean=grid_info[neighbs[0]].G.mean
-                thisGvar=grid_info[neighbs[0]].G.std
-                for i in range(1,len(neighbs)):
-                    thisstuff=[thisGmean,thisGvar,thisN]
-                    newstuff=[grid_info[neighbs[i]].G.mean,
-                              grid_info[neighbs[i]].G.std,
-                              grid_info[neighbs[i]].N]
-                    thisGmean,thisGvar,thisN=cf.pooledmeanvar(thisstuff,newstuff)
-                fout.write("[%3.2f,%3.2f],"%(thisGmean,thisGvar))
-                g_found=thisGmean
-                d_found=thisDmean
-            #look up C using A measure
-            #find nearest D,G
-            f_found=2**d_found
-            g_found=round(g_found)
-            f_found=round(f_found)
-            d_found=np.log2(f_found)
-            #print A_measure
-            c_mean,c_std=find_c(d_found,g_found,A_measure)
-            fout.write("[%3.2f,%3.2f]],\n"%(c_mean,c_std))
-            #fout.write("c=[%3.2f,%3.2f]\n"%(1./c_mean,(c_std/(c_mean**2))))
-            
-            ii+=1
-            
-        except MemoryError:
-            continue
+            #merge G
+            thisN=grid_info[neighbs[0]].N
+            thisGmean=grid_info[neighbs[0]].G.mean
+            thisGvar=grid_info[neighbs[0]].G.std
+            for i in range(1,len(neighbs)):
+                thisstuff=[thisGmean,thisGvar,thisN]
+                newstuff=[grid_info[neighbs[i]].G.mean,
+                          grid_info[neighbs[i]].G.std,
+                          grid_info[neighbs[i]].N]
+                thisGmean,thisGvar,thisN=cf.pooledmeanvar(thisstuff,newstuff)
+            fout.write("[%3.2f,%3.2f],"%(thisGmean,thisGvar))
+            g_found=thisGmean
+            d_found=thisDmean
+        #look up C using A measure
+        #find nearest D,G
+        f_found=2**d_found
+        g_found=round(g_found)
+        f_found=round(f_found)
+        d_found=np.log2(f_found)
+        #print A_measure
+        c_mean,c_std=find_c(d_found,g_found,A_measure)
+        fout.write("[%3.2f,%3.2f]],\n"%(c_mean,c_std))
+        #fout.write("c=[%3.2f,%3.2f]\n"%(1./c_mean,(c_std/(c_mean**2))))
+        
+        ii+=1
+        
+    except MemoryError:
+        continue
 
 
 #leg=plt.legend(llist,['Taurus','Chamaeleon I','Lupus 3','IC 348'])
@@ -272,8 +286,9 @@ for datafile in testfiles:
 #leg=plt.legend(llist,names,loc='upper left')
 #leg=plt.legend(llist,['With binaries','Without binaries'],loc='upper right')
 #leg=plt.legend(llist,['142','132'])
-leg=plt.legend(llist,['100','500','1000','2000','4000','6000','original (338)'])
-ax2.add_artist(leg)
-#plt.legend()
+#leg=plt.legend(llist,['100','500','1000','2000','4000','6000','original (338)'])
+#leg=plt.legend(llist,['Series 2','Series 3'])
+#ax2.add_artist(leg)
+plt.legend(loc='upper left')
 
 #plt.savefig("../Collaborations/160816_Koepferl/SMA_ALMA/G_grid.pdf")

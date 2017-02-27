@@ -9,7 +9,7 @@ import numpy as np
 import qfuncs as cf
 import matplotlib.pyplot as plt
 
-plt.rcParams.update({'font.size': 14, 'font.family':'serif','text.usetex':True})
+plt.rcParams.update({'font.size': 14, 'font.family':'serif','text.usetex':False})
 
 plot_std=False
 
@@ -23,7 +23,7 @@ class liststat(object):
     def populate(self,l):
         self.list=l
         self.mean=np.mean(l)
-        self.std=np.std(l)
+        self.std=np.std(l)/len(l)
     
 class grid_square(object):
     def __init__(self,pc1min,pc2min,pc1max,pc2max,npts,i,j):
@@ -48,13 +48,13 @@ class grid_square(object):
             self.pc2=-99
         
     def printD(self):
-        return "[%3.2f,%3.2f]"%(self.D.mean,self.D.std)
+        return "[%3.2f,%3.2f],"%(self.D.mean,self.D.std)
         
     def printC(self):
-        return "[%3.2f,%3.2f]"%(self.C.mean,self.C.std)
+        return "[%3.2f,%3.2f],"%(self.C.mean,self.C.std)
         
     def printG(self):
-        return "[%3.2f,%3.2f]"%(self.G.mean,self.G.std)
+        return "[%3.2f,%3.2f],"%(self.G.mean,self.G.std)
     
     
 D,C,G,_=cf.get_parameter_space()
@@ -107,6 +107,19 @@ y=np.linspace(min2,max2,N)
 dx=x[1]-x[0]
 dy=y[1]-y[0]
 
+grid=np.zeros((N-1,N-1),
+                   dtype=[('n', '<f4'), 
+                         ('meanD', '<f4'), 
+                         ('stdD', '<f4'), 
+                         ('meanL', '<f4'), 
+                         ('stdL', '<f4'), 
+                         ('pc1', '<f4'),
+                         ('pc2','<f4')])
+grid_meanD=np.zeros((N-1,N-1))
+grid_stdD=np.zeros((N-1,N-1))
+grid_meanL=np.zeros((N-1,N-1))
+grid_stdL=np.zeros((N-1,N-1))
+
 for i,j in cf.cartesian((range(N-1),range(N-1))):
     here=cf.select_data(alldat,d=np.mean([x[i],x[i+1]]),dstring='pc1',sep=dx/2.)
     here=cf.select_data(here,d=np.mean([y[j],y[j+1]]),dstring='pc2',sep=dy/2.)
@@ -114,7 +127,9 @@ for i,j in cf.cartesian((range(N-1),range(N-1))):
     stds[i,j]=np.std(here[thing])
     n_pts[i,j]=len(here)
     grid_info.append(grid_square(x[i],y[j],x[i+1],y[j+1],len(here),i,j))
-    
+    grid[i,j]['n']=len(here)
+    grid[i,j]['pc1']=x[i]
+    grid[i,j]['pc2']=y[j]
     if len(here)==0:
         continue
 
@@ -124,7 +139,14 @@ for i,j in cf.cartesian((range(N-1),range(N-1))):
         grid_info[-1].G.populate(here['G'])
         grid_info[-1].pc1.populate(here['pc1'])
         grid_info[-1].pc2.populate(here['pc2'])
+        grid[i,j]['meanD']=grid_info[-1].D.mean
+        grid[i,j]['stdD']=grid_info[-1].D.std
+        grid[i,j]['meanL']=grid_info[-1].G.mean
+        grid[i,j]['stdL']=grid_info[-1].G.std
 
+        
+#f=open('grid_DL.dat','w')
+grid.dump('grid_DL')
     
 meanmax=np.max(means)
 meanmin=np.min(means)
