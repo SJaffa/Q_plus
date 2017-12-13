@@ -106,6 +106,47 @@ def find_c(testD,testG,A_val):
     var=sum(np.array(ps)*pow((np.array(cs)-expect),2))/sum(ps)
     return expect,var
     
+def plotgrid(plot_std=False, thing='D'):
+    if plot_std:
+        fig,(ax2,ax3)=plt.subplots(1,2,sharex=True,sharey=True,figsize=(18,6))
+    else:
+        fig=plt.figure()
+        fig.set_size_inches(8.5,6)
+        ax2=plt.gca()
+    
+    ax2.set_title(r'Mean $\cal{'+thing+'}$')
+    if plot_std:
+        ax3.set_title(r'Standard deviation of $\cal{'+thing+'}$')
+        ax3.set_xlabel("PC 1")
+        ax3.set_ylabel("PC 2")
+    ax2.set_xlabel("PC 1")
+    ax2.set_ylabel("PC 2")
+    
+    grid=np.load('grid_DL')
+    means=grid['mean'+thing]
+    stds=grid['std'+thing]
+    means[means==0]=np.nan
+    
+    min1=np.min(grid['pc1'])
+    max1=np.max(grid['pc1'])
+    min2=np.min(grid['pc2'])
+    max2=np.max(grid['pc2'])
+    
+    im1=ax2.imshow(means.T,aspect='auto',interpolation='none',
+                   origin='lower',extent=(min1,max1,min2,max2),vmin=0)#,vmax=meanmax)
+    
+    if plot_std:
+        im2=ax3.imshow(stds.T,aspect='auto',interpolation='none',
+                       origin='lower',extent=(min1,max1,min2,max2),vmin=0)#
+    
+    fig.colorbar(im1,ax=ax2,pad=0)
+    
+    if plot_std:
+        fig.colorbar(im2,ax=ax3,pad=0)
+        return ax2,ax3,grid
+    else:
+        return ax2,grid
+    
 #==============================================================================
 import numpy as np
 import matplotlib.pyplot as plt
@@ -113,47 +154,14 @@ import qfuncs as qf
 import glob as gb
 
 plt.rcParams.update({'font.size': 14, 'font.family':'serif','text.usetex':False})
-plot_std=False
-thing='L'
+
+ax2,grid=plotgrid()
+
+
 
 namelist=gb.glob('/home/sjaffa/Dropbox/PhDwork/160101DCGstars/Data/Real/*_nobins.txt')
 ucols=[0,1]
 skip=0
-
-if plot_std:
-    fig,(ax2,ax3)=plt.subplots(1,2,sharex=True,sharey=True,figsize=(18,6))
-else:
-    fig=plt.figure()
-    fig.set_size_inches(8.5,6)
-    ax2=plt.gca()
-
-ax2.set_title(r'Mean $\cal{'+thing+'}$')
-if plot_std:
-    ax3.set_title(r'Standard deviation of $\cal{'+thing+'}$')
-    ax3.set_xlabel("PC 1")
-    ax3.set_ylabel("PC 2")
-ax2.set_xlabel("PC 1")
-ax2.set_ylabel("PC 2")
-
-grid=np.load('grid_DL')
-means=grid['mean'+thing]
-stds=grid['std'+thing]
-
-min1=np.min(grid['pc1'])-0.01
-max1=np.max(grid['pc1'])+0.01
-min2=np.min(grid['pc2'])-0.01
-max2=np.max(grid['pc2'])+0.01
-
-im1=ax2.imshow(means.T,aspect='auto',interpolation='none',
-               origin='lower',extent=(min1,max1,min2,max2),vmin=0)#,vmax=meanmax)
-if plot_std:
-    im2=ax3.imshow(stds.T,aspect='auto',interpolation='none',
-                   origin='lower',extent=(min1,max1,min2,max2),vmin=0)#
-
-fig.colorbar(im1,ax=ax2,pad=0)
-if plot_std:
-    fig.colorbar(im2,ax=ax3,pad=0)
-
 
 for fname in namelist:
     print fname
@@ -190,16 +198,15 @@ for fname in namelist:
     #print data['mbar'],data['sbar'],data['mbar']/data['sbar']
     
     Q=res[2]/res[3]
-    if Q>0.7:
-        print "Q = %3.2f: this cluster may be centrally concentrated"%Q
-    if Q>0.9:
+    if Q>0.8:
         print "Q = %3.2f: this cluster may be centrally concentrated"%Q
         #continue
                          
     p1,p2=qf.transform_to_pc(data)
     
-    l1,=ax2.plot(p1,p2,'.',markersize=10,label=fname[63:-11])
-    print p1,p2
+    
+    l1,=ax2.plot(p1,p2,'wo',markersize=10,label=fname[63:-11])
+    #print p1,p2
     plt.legend()
     
     
@@ -220,8 +227,8 @@ for fname in namelist:
         l_found=grid[ii,jj]['meanL']
         l_std=grid[ii,jj]['stdL']
     
-    fout.write("[%3.2f,%3.2f]],\n"%(d_found,d_std))
-    fout.write("[%3.2f,%3.2f]],\n"%(l_found,l_std))
+    fout.write("[%3.2f,%3.2f]], "%(d_found,d_std))
+    fout.write("[%3.2f,%3.2f]], "%(l_found,l_std))
         
     #look up C using A measure
     #find nearest D,G
@@ -230,9 +237,9 @@ for fname in namelist:
     f_found=round(f_found)
     d_found=np.log2(f_found)
     
-    print d_found,l_found
+    #print d_found,l_found
     
-    print res[-1]
+    #print res[-1]
     c_file="./AllStars/C_D%3.2fG%i.res"%(d_found,l_found)
     arr=np.loadtxt(c_file,ndmin=2)
     cs=[]
@@ -244,13 +251,9 @@ for fname in namelist:
         ps.append(qf.normgaus(res[-1],m,s))
     expect=sum(np.array(ps)*np.array(cs))/sum(ps)
     var=sum(np.array(ps)*pow((np.array(cs)-expect),2))/sum(ps)
-    
-    print cs
-    print ps
-    
-    print expect,var
+
     
     c_mean,c_std=find_c(d_found,l_found,res[-1])
-    fout.write("[%3.2f,%3.2f]],\n"%(c_mean,c_std))
+    fout.write("[%3.2f,%3.2f]], "%(c_mean,c_std))
     fout.write("c=[%3.2f,%3.2f]\n"%(1./c_mean,(c_std/(c_mean**2))))
 

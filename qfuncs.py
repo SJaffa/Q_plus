@@ -4,6 +4,90 @@ import re
 from scipy.spatial import KDTree
 
 #===========================================================
+
+    
+def find_square(grid,p1,p2):
+    for i in range(len(grid)):
+        gs=grid[i]
+        if (gs.pc1min<p1 and gs.pc1max>p1):
+            if (gs.pc2min<p2 and gs.pc2max>p2):
+                return i,gs.N
+    
+
+
+def find_c(testD,testG,A_val):
+    c_file="./AllStars/C_D%3.2fG%i.res"%(testD,testG)
+    arr=np.loadtxt(c_file,ndmin=2)
+    cs=[]
+    ps=[]
+    for i in range(len(arr)):
+        cs.append(1./arr[i,0])
+        m=arr[i,1]
+        s=arr[i,2]
+        ps.append(normgaus(A_val,m,s))
+    expect=sum(np.array(ps)*np.array(cs))/sum(ps)
+    var=sum(np.array(ps)*pow((np.array(cs)-expect),2))/sum(ps)
+    return expect,var
+    
+    
+def find_neighbs(grid,i):
+    this=grid[i]
+    dx=this.pc1max-this.pc1min
+    dy=this.pc2max-this.pc2min
+    xmid=this.pc1min+0.5*dx
+    ymid=this.pc2min+0.5*dy
+    try:
+        n1,nn1=find_square(grid,xmid-dx,ymid+dy)
+    except TypeError:
+        n1=0
+        nn1=0
+        pass
+    try:
+        n2,nn2=find_square(grid,xmid,ymid+dy)
+    except TypeError:
+        n2=0
+        nn2=0
+        pass
+    try:
+        n3,nn3=find_square(grid,xmid+dx,ymid+dy)
+    except TypeError:
+        n3=0
+        nn3=0
+        pass
+    try:
+        n4,nn4=find_square(grid,xmid-dx,ymid)
+    except TypeError:
+        n4=0
+        nn4=0
+        pass
+    try:
+        n5,nn5=find_square(grid,xmid+dx,ymid)
+    except TypeError:
+        n5=0
+        nn5=0
+        pass
+    try:
+        n6,nn6=find_square(grid,xmid-dx,ymid-dy)
+    except TypeError:
+        n6=0
+        nn6=0
+        pass
+    try:
+        n7,nn7=find_square(grid,xmid,ymid-dy)
+    except TypeError:
+        n7=0
+        nn7=0
+        pass
+    try:
+        n8,nn8=find_square(grid,xmid+dx,ymid-dy)
+    except TypeError:
+        n8=0
+        nn8=0
+        pass
+    mask_empty_squares=np.array([nn1,nn2,nn3,nn4,nn5,nn6,nn7,nn8])
+    n_tot=sum(mask_empty_squares)
+    return np.array([n1,n2,n3,n4,n5,n6,n7,n8])[mask_empty_squares>0],n_tot
+
 def pooledmeanvar(x,y):
     '''calculates mean and variance of hte combination of two data sets, x and y'''
     xmean = x[0]
