@@ -1,4 +1,5 @@
 # Q_plus
+<<<<<<< HEAD
 Q+: an algorithm for statistically quantifying sub-structure in 
 star clusters
 
@@ -34,3 +35,4 @@ and <columns> is a list of the indices if the x and y positions.
 Example:
 
 python gridrecon.py /home/sjaffa/Dropbox/Data/IC348.txt [0,1]
+
