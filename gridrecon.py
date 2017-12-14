@@ -38,7 +38,7 @@ ii=0
 
 ucols=sys.argv[2]
 ucols=map(int, ucols.strip('[]').split(','))
-print ucols.dtype
+
 #fout.write("\n"+datafile+"\n")
 print "%s\n"%datafile,
 #print ucols
