@@ -33,9 +33,6 @@ datafile=sys.argv[1]
 
 fout=sys.stdout
 
-ii=0
-
-
 ucols=sys.argv[2]
 ucols=map(int, ucols.strip('[]').split(','))
 
@@ -81,18 +78,18 @@ llist.append(l1)
 p1=pcs[0,0]
 p2=pcs[1,0]
 
-while 0:
+tmp=True
+while tmp:
 
     print "PC1 = %3.2f, PC2 = %3.2f"%(p1,p2)
-    if p2<-0.2:
-        print "This cluster is on the edge of parameter space \nand may not be fractally substructured: PC2<-0.2"
+    if p2<-0.3:
+        print "This cluster is on the edge of parameter space \nand may not be fractally substructured: PC2<-0.3"
     
     try:
         thissquare,_=cf.find_square(grid_info,p1,p2)
     except TypeError:
         fout.write("Outside parameter space:")
         fout.write("PC1=%3.2f, PC2=%3.2f\n"%(p1,p2))
-        break
     
     est=grid_info[thissquare]
     
@@ -143,10 +140,10 @@ while 0:
     #fout.write("[%3.2f,%3.2f]],\n"%(c_mean,c_std))
     fout.write("[%3.2f,%3.2f]\n"%(1./c_mean,(c_std/(c_mean**2))))
     
-    ii+=1
-    break
+    tmp=False
 
 #except MemoryError:
 #    continue
 
 plt.legend(loc='upper left')
+plt.show()
