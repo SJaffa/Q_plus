@@ -41,7 +41,7 @@ ucols=sys.argv[2]
 print "%s\n"%datafile,
 #print ucols
 #try:
-res,x,y=cf.makeMST(datafile)#,ucols=ucols)
+res,x,y=cf.makeMST(datafile,ucols=ucols)
 
 if len(x)<10:
     print "Only %i stars"%len(x)
