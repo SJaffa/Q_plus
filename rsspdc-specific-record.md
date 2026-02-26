@@ -14,8 +14,8 @@ The other emphasis is on making the work 'verifiable', exposing the complete ste
 *How can you keep track of the history of your project and collaborate on it?*
 
 - [ ] Uses git (or other source control tool)
-	- [ ]  	🥉Bronze *(Easy)*: Using version control but has a shallow project history, just placed in git for distribution
-	- [ ]  	🥈Silver *(Intermediate)*: Longer project history, commit messages of mixed quality, some large messy changes
+	- [x]  	🥉Bronze *(Easy)*: Using version control but has a shallow project history, just placed in git for distribution
+	- [x]  	🥈Silver *(Intermediate)*: Longer project history, commit messages of mixed quality, some large messy changes
 	- [ ]  	🥇Gold *(Hard)*: Silver plus - Well written commit messages, nice granular commits making discrete self-contained changes. Tags, releases, or branches at major project milestones, maybe some contributions from other users
 	- [ ]  	🏆Platinum *(MAXIMUM OVERKILL)*: Gold plus - Some from: [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/); Clean history with a consistent rebasing/merging strategy; Signed commits from all contributors; Contributions go through a consistent workflow like, issues, then a pull request from a branch.
 
@@ -122,12 +122,12 @@ The other emphasis is on making the work 'verifiable', exposing the complete ste
 	- [ ] 	🥉Bronze *(easy)*: Project has README file that either contains directly or links to resources which answer these questions:
 		- [ ] Provides a description of the project structure so that the user knows which directories to find things in, possibly including a visual representation of the structure
 		- [ ] Contains instructions with sufficient detail for someone else to re-run the analysis
-		- [ ] What is the name or title of the project for which this code is record?
+		- [x] What is the name or title of the project for which this code is record?
 		- [ ] Why did you peform this analysis?
 		- [ ] What problem does it address and how?
 		- [ ] How do I set up an environment to re-run it? (with example)
-		- [ ] What inputs do I need?
-		- [ ] What outputs should I expect?
+		- [x] What inputs do I need?
+		- [x] What outputs should I expect?
 		- [ ] How do I cite the project?
 		- [ ] Who contributed to the project and what did they contribute?
 		- [ ] Who should I contact, about what, and how?
@@ -231,7 +231,7 @@ This may genuinely be all that you need, or inadequate to the task depending on 
 *How can you test your project so you can be confident it does what you think it does?*
 
 - [ ] Project has undergone suitable testing
-	- [ ]  	🥉Bronze *(easy)*: Includes a minimal test data set necessary to demonstrate the basic functionality of the analysis
+	- [x]  	🥉Bronze *(easy)*: Includes a minimal test data set necessary to demonstrate the basic functionality of the analysis
 	- [ ]  	🥈Silver *(easy)*: Includes test datasets which cover a range of outcomes of the analysis
 	- [ ]  	🥇Gold *(intermediate)*: You are using unit tests and an automated testing framework to check the correctness of core steps of your analysis
 	- [ ]  	🏆Platinum *(hard)*: Have your analysis code written and tested on preliminary or simulated data in advance of recieving your principle dataset with a copy of your code from this time archived and referenced in a pre-registration or registered report.
@@ -314,7 +314,7 @@ This may genuinely be all that you need, or inadequate to the task depending on 
 *How can people install or access the software emerging from your project?*
 
 - [ ] Project is distributed in a suitable fashion
-	- [ ]  	🥉Bronze *(Easy)*: Code and data (barring privacy related access restrictions) are in public repositories.
+	- [x]  	🥉Bronze *(Easy)*: Code and data (barring privacy related access restrictions) are in public repositories.
 	- [ ]  	🥈Silver *(Intermediate)*: Detailed instructions on how to fetch, install and configure the tools and data needed re-run your analysis, and how to re-run the analysis in the described environment.
 	- [ ]  	🥇Gold *(Intermediate)*: Project is in a reproducible interactive environment such as those offered by [binder](https://binderhub.readthedocs.io/en/latest/index.html) or [renku](https://renkulab.io/).
 	- [ ]  	🏆Platinum *(Hard)*: Gold plus - Your project is built and served as a website using continuous integration and deployment tools such that your analysis is run on your data in a reproducible compute environment and computational results like graphs and statistics are programatically inserted into your output. (It is best to have some form of caching when doing this).
